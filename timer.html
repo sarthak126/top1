@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Top 1% Club | Focus Timer</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Roboto+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Poppins', 'sans-serif'],
+                        mono: ['Roboto Mono', 'monospace'],
+                    },
+                    colors: {
+                        brand: {
+                            start: '#0EA5FF',
+                            mid: '#2B7BFF',
+                            end: '#3F6CFF',
+                        },
+                    },
+                    boxShadow: {
+                        'glow': '0 0 20px rgba(14, 165, 255, 0.5)',
+                        'glow-sm': '0 0 10px rgba(14, 165, 255, 0.3)',
+                    },
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-20px)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        :root {
+            --bg-body: #F0F4F8;
+            --text-main: #1e293b;
+        }
+        .dark {
+            --bg-body: #050505;
+            --text-main: #f8fafc;
+        }
+        body {
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            transition: background-color 0.5s ease, color 0.5s ease;
+        }
+        .glass-card {
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-radius: 32px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.6);
+            transition: all 0.3s ease;
+        }
+        .dark .glass-card {
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            background: rgba(15, 23, 42, 0.4);
+        }
+        .glass {
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.6);
+        }
+        .dark .glass {
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            background: rgba(10, 10, 10, 0.6);
+        }
+        .text-gradient {
+            background: linear-gradient(135deg, #0EA5FF 0%, #2B7BFF 50%, #3F6CFF 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .bg-gradient-brand {
+            background: linear-gradient(135deg, #0EA5FF 0%, #2B7BFF 50%, #3F6CFF 100%);
+        }
+        
+        /* --- SIDEBAR STYLES --- */
+        #taskbar {
+            transition: width 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+        .nav-item {
+            position: relative;
+            transition: all 0.2s ease-out;
+        }
+        .nav-item::before {
+            content: '';
+            position: absolute;
+            left: -12px;
+            top: 50%;
+            transform: translateY(-50%) scaleY(0);
+            width: 4px;
+            height: 24px;
+            background: #2B7BFF;
+            border-radius: 0 4px 4px 0;
+            transition: transform 0.2s ease;
+        }
+        .nav-item.active::before {
+            transform: translateY(-50%) scaleY(1);
+        }
+        .nav-item:hover .tooltip {
+            opacity: 1;
+            transform: translateX(0);
+            visibility: visible;
+        }
+
+        /* Timer Ring Transition */
+        .timer-ring-circle {
+            transition: stroke-dashoffset 0.5s linear;
+            transform: rotate(-90deg);
+            transform-origin: 50% 50%;
+        }
+
+        /* Range Slider Styling */
+        input[type=range] {
+            -webkit-appearance: none; 
+            background: transparent; 
+        }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 20px;
+            width: 20px;
+            border-radius: 50%;
+            background: #2B7BFF;
+            margin-top: -8px;
+            box-shadow: 0 0 10px rgba(43, 123, 255, 0.5);
+        }
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 4px;
+            background: rgba(148, 163, 184, 0.3);
+            border-radius: 2px;
+        }
+
+        /* --- HIGH PERFORMANCE FLIP CLOCK --- */
+        .flip-clock-container {
+            perspective: 1200px;
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+        
+        .flip-card {
+            position: relative;
+            width: 210px; 
+            height: 280px; 
+            font-family: 'Roboto Mono', monospace;
+            font-weight: 700;
+            font-size: 14rem;
+            line-height: 280px;
+            text-align: center;
+            border-radius: 16px;
+            background: #1e293b;
+            color: #f8fafc;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+            transform-style: preserve-3d; 
+        }
+
+        @media (max-width: 640px) {
+            .flip-card { 
+                width: 124px; 
+                height: 175px; 
+                font-size: 7rem; 
+                line-height: 175px; 
+                border-radius: 12px;
+            }
+            .flip-clock-container { gap: 0.5rem; }
+        }
+
+        .flip-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transform-style: preserve-3d;
+        }
+
+        .card-half {
+            position: absolute;
+            left: 0;
+            width: 100%;
+            height: 50%;
+            overflow: hidden;
+            background-color: #1e293b; 
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+        }
+
+        .card-half span {
+            display: block;
+            height: 200%;
+            width: 100%;
+            line-height: 280px; 
+        }
+        @media (max-width: 640px) {
+            .card-half span { line-height: 175px; } 
+        }
+
+        .top-half {
+            top: 0;
+            border-radius: 16px 16px 0 0;
+            background: linear-gradient(to bottom, #334155 0%, #1e293b 100%);
+            transform-origin: bottom;
+            border-bottom: 1px solid rgba(0,0,0,0.5); 
+        }
+        @media (max-width: 640px) { .top-half { border-radius: 12px 12px 0 0; } }
+        
+        .bottom-half {
+            bottom: 0;
+            border-radius: 0 0 16px 16px;
+            background: linear-gradient(to bottom, #1e293b 0%, #334155 100%);
+            transform-origin: top;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+        @media (max-width: 640px) { .bottom-half { border-radius: 0 0 12px 12px; } }
+        
+        .bottom-half span {
+            transform: translateY(-50%);
+        }
+
+        .flip-leaf-top {
+            z-index: 2; 
+            transform-origin: bottom;
+            transform: rotateX(0deg);
+        }
+        .flip-leaf-bottom {
+            z-index: 1; 
+            transform-origin: top;
+            transform: rotateX(90deg); 
+        }
+
+        .shadow-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            opacity: 0;
+            transition: none; 
+        }
+
+        .flipping-top {
+            animation: flipTopAnim 0.3s ease-in forwards;
+        }
+        
+        .flipping-bottom {
+            animation: flipBottomAnim 0.45s ease-out 0.15s forwards;
+        }
+
+        @keyframes flipTopAnim {
+            0% { transform: rotateX(0deg); }
+            100% { transform: rotateX(-90deg); }
+        }
+
+        @keyframes flipBottomAnim {
+            0% { transform: rotateX(90deg); }
+            60% { transform: rotateX(0deg); }
+            80% { transform: rotateX(10deg); }
+            100% { transform: rotateX(0deg); }
+        }
+
+        .flipping-top .shadow-overlay {
+            animation: shadowTop 0.3s ease-in forwards;
+        }
+        .flipping-bottom .shadow-overlay {
+            animation: shadowBottom 0.45s ease-out 0.15s forwards;
+        }
+
+        @keyframes shadowTop {
+            0% { opacity: 0; }
+            100% { opacity: 0.8; }
+        }
+        @keyframes shadowBottom {
+            0% { opacity: 0.8; }
+            60% { opacity: 0; }
+            100% { opacity: 0; }
+        }
+
+        .no-cursor { cursor: none; }
+    </style>
+</head>
+<body class="h-screen w-screen overflow-hidden antialiased flex">
+
+    <div class="fixed inset-0 z-[-1] pointer-events-none">
+        <div class="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-brand-start/20 rounded-full blur-[120px] animate-pulse-slow"></div>
+        <div class="absolute bottom-[10%] right-[-5%] w-[400px] h-[400px] bg-brand-end/20 rounded-full blur-[100px] animate-float"></div>
+    </div>
+
+    <nav id="taskbar" class="h-full glass flex flex-col items-center py-6 w-[80px] border-r border-white/10 z-50 relative group transition-all shrink-0">
+        
+        <div class="mb-10 w-10 h-10 rounded-xl bg-gradient-brand flex items-center justify-center text-white font-bold text-xs shadow-glow-sm shrink-0">
+            1%
+        </div>
+
+        <div class="flex-1 flex flex-col gap-6 w-full items-center nav-container overflow-hidden">
+            <a href="homepage.html" class="nav-item w-12 h-12 flex items-center justify-center rounded-xl text-gray-400 hover:text-brand-mid hover:bg-white/5 transition-colors" aria-label="Home">
+                <i data-lucide="home" class="w-6 h-6"></i>
+                <span class="tooltip absolute left-16 bg-slate-900 text-white text-xs px-2 py-1 rounded opacity-0 invisible transform -translate-x-2 transition-all shadow-lg whitespace-nowrap z-50 font-medium">Home</span>
+            </a>
+
+            <button class="nav-item active w-12 h-12 flex items-center justify-center rounded-xl text-brand-mid bg-brand-start/10 transition-colors" aria-label="Timer">
+                <i data-lucide="clock" class="w-6 h-6"></i>
+                <span class="tooltip absolute left-16 bg-slate-900 text-white text-xs px-2 py-1 rounded opacity-0 invisible transform -translate-x-2 transition-all shadow-lg whitespace-nowrap z-50 font-medium">Focus Timer</span>
+            </button>
+
+            <button class="nav-item w-12 h-12 flex items-center justify-center rounded-xl text-gray-400 hover:text-brand-mid hover:bg-white/5 transition-colors" aria-label="Tasks">
+                <i data-lucide="check-circle" class="w-6 h-6"></i>
+                <span class="tooltip absolute left-16 bg-slate-900 text-white text-xs px-2 py-1 rounded opacity-0 invisible transform -translate-x-2 transition-all shadow-lg whitespace-nowrap z-50 font-medium">Tasks</span>
+            </button>
+
+            <button class="nav-item w-12 h-12 flex items-center justify-center rounded-xl text-gray-400 hover:text-brand-mid hover:bg-white/5 transition-colors" aria-label="Stats">
+                <i data-lucide="bar-chart-2" class="w-6 h-6"></i>
+                <span class="tooltip absolute left-16 bg-slate-900 text-white text-xs px-2 py-1 rounded opacity-0 invisible transform -translate-x-2 transition-all shadow-lg whitespace-nowrap z-50 font-medium">Statistics</span>
+            </button>
+
+            <button class="nav-item w-12 h-12 flex items-center justify-center rounded-xl text-gray-400 hover:text-brand-mid hover:bg-white/5 transition-colors" aria-label="Leaderboard">
+                <i data-lucide="trophy" class="w-6 h-6"></i>
+                <span class="tooltip absolute left-16 bg-slate-900 text-white text-xs px-2 py-1 rounded opacity-0 invisible transform -translate-x-2 transition-all shadow-lg whitespace-nowrap z-50 font-medium">Leaderboard</span>
+            </button>
+        </div>
+
+        <div class="mt-auto flex flex-col gap-6 w-full items-center pb-6">
+            <button id="theme-toggle" class="w-10 h-10 rounded-full hover:bg-white/10 flex items-center justify-center transition-colors text-gray-400 hover:text-brand-mid">
+                <i data-lucide="sun" class="w-5 h-5 hidden dark:block"></i>
+                <i data-lucide="moon" class="w-5 h-5 block dark:hidden"></i>
+            </button>
+
+            <div class="w-10 h-10 rounded-full bg-gradient-brand p-0.5 cursor-pointer hover:shadow-glow transition-all">
+                <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix" alt="User" class="w-full h-full rounded-full bg-slate-900">
+            </div>
+        </div>
+
+        <button id="toggleSidebar" class="absolute -right-3 top-1/2 transform -translate-y-1/2 w-6 h-12 bg-white dark:bg-slate-800 rounded-full shadow-md flex items-center justify-center cursor-pointer hover:text-brand-mid text-gray-400 z-50 opacity-0 group-hover:opacity-100 transition-opacity border border-gray-100 dark:border-white/10">
+            <i data-lucide="chevron-left" class="w-4 h-4 transition-transform" id="toggleIcon"></i>
+        </button>
+    </nav>
+
+    <main class="flex-1 relative flex items-center justify-center h-full overflow-hidden">
+        
+        <div id="main-view" class="w-full max-w-md p-6 relative z-10 transition-opacity duration-500">
+            
+            <div class="flex justify-between items-center mb-8">
+                <div class="w-10 h-10 rounded-xl bg-gradient-brand flex items-center justify-center text-white font-bold text-xs shadow-glow-sm">
+                    1%
+                </div>
+                </div>
+
+            <div class="glass-card p-8 flex flex-col items-center shadow-2xl relative overflow-hidden">
+                
+                <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 bg-brand-start/10 rounded-full blur-3xl pointer-events-none"></div>
+
+                <div id="task-container" class="mb-8 text-center relative z-20 cursor-pointer group">
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-start/10 border border-brand-start/20 text-brand-mid text-xs font-bold uppercase tracking-wider">
+                        <span id="status-dot" class="w-2 h-2 rounded-full bg-brand-mid animate-pulse"></span>
+                        <span id="timer-status">Ready</span>
+                    </div>
+                    <h2 id="task-name" class="text-2xl font-bold mt-3 dark:text-white text-slate-900 group-hover:text-brand-mid transition-colors">Deep Work</h2>
+                    <i data-lucide="edit-2" class="w-3 h-3 absolute -right-4 top-8 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity"></i>
+                </div>
+
+                <div class="relative w-64 h-64 mb-8">
+                    <svg class="w-full h-full transform -rotate-90 drop-shadow-[0_0_15px_rgba(14,165,255,0.2)]">
+                        <circle cx="128" cy="128" r="110" stroke="currentColor" stroke-width="8" fill="none" class="text-gray-200 dark:text-slate-700 opacity-30" />
+                        <circle id="timer-ring" cx="128" cy="128" r="110" stroke="url(#gradient)" stroke-width="8" fill="none" 
+                                stroke-linecap="round" 
+                                stroke-dasharray="691" 
+                                stroke-dashoffset="0" 
+                                class="timer-ring-circle" />
+                        <defs>
+                            <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                                <stop offset="0%" style="stop-color:#0EA5FF" />
+                                <stop offset="100%" style="stop-color:#3F6CFF" />
+                            </linearGradient>
+                        </defs>
+                    </svg>
+                    
+                    <div class="absolute inset-0 flex flex-col items-center justify-center">
+                        <span id="time-display" class="text-6xl font-bold dark:text-white text-slate-900 tracking-tight font-mono tabular-nums">25:00</span>
+                        <button id="duration-btn" class="mt-2 text-xs text-gray-400 hover:text-brand-mid transition-colors font-medium border-b border-dashed border-gray-400 hover:border-brand-mid pb-0.5">
+                            Set Duration
+                        </button>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-6 w-full justify-center">
+                    <button id="reset-btn" class="w-14 h-14 rounded-full flex items-center justify-center bg-gray-100 dark:bg-slate-800 text-gray-500 hover:text-red-500 hover:bg-red-500/10 transition-all">
+                        <i data-lucide="rotate-ccw" class="w-6 h-6"></i>
+                    </button>
+                    <button id="main-btn" class="w-20 h-20 rounded-[2rem] bg-gradient-brand text-white shadow-glow hover:shadow-glow-lg hover:scale-105 active:scale-95 transition-all flex items-center justify-center">
+                        <i id="main-icon" data-lucide="play" class="w-8 h-8 fill-current ml-1"></i>
+                    </button>
+                    <button id="finish-btn" class="w-14 h-14 rounded-full flex items-center justify-center bg-gray-100 dark:bg-slate-800 text-gray-500 hover:text-green-500 hover:bg-green-500/10 transition-all">
+                        <i data-lucide="check" class="w-6 h-6"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="mt-6 flex justify-center">
+                <button id="enter-standby-btn" class="flex items-center gap-2 px-6 py-3 rounded-full bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-brand-mid hover:text-white transition-all shadow-sm text-sm font-semibold group">
+                    <i data-lucide="maximize" class="w-4 h-4 group-hover:scale-110 transition-transform"></i>
+                    <span>Standby Mode</span>
+                </button>
+            </div>
+            
+            <p class="text-center mt-6 text-xs text-gray-400 font-mono" id="sync-status">Syncing with Mobile App...</p>
+        </div>
+    </main>
+
+    <!-- TOAST NOTIFICATION -->
+    <div id="toast-container" class="fixed top-6 left-1/2 -translate-x-1/2 z-[110] pointer-events-none transition-all duration-500 opacity-0 -translate-y-10">
+        <div class="glass-card px-6 py-4 flex items-center gap-4 shadow-glow-sm border-brand-mid/30 bg-slate-900/90 backdrop-blur-xl">
+            <div class="w-10 h-10 rounded-full bg-green-500/20 text-green-400 flex items-center justify-center shrink-0">
+                <i data-lucide="trophy" class="w-5 h-5"></i>
+            </div>
+            <div>
+                <h4 class="text-sm font-bold text-white">Session Complete!</h4>
+                <p id="toast-message" class="text-xs text-gray-300">Successfully focused for 25 minutes.</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="settings-modal" class="fixed inset-0 z-50 flex items-end sm:items-center justify-center opacity-0 pointer-events-none transition-opacity duration-300 bg-black/40 backdrop-blur-sm">
+        <div class="glass-card w-full max-w-sm p-6 m-4 transform translate-y-10 transition-transform duration-300">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-lg font-bold dark:text-white">Session Duration</h3>
+                <button id="close-modal" class="text-gray-400 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
+            </div>
+            <div class="mb-8">
+                <div class="flex justify-between text-sm font-bold text-brand-mid mb-4">
+                    <span>5 min</span>
+                    <span id="slider-value" class="text-2xl text-white">25</span>
+                    <span>120 min</span>
+                </div>
+                <input type="range" id="duration-slider" min="5" max="120" step="5" value="25" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700">
+            </div>
+            <button id="save-duration" class="w-full py-4 rounded-xl bg-gradient-brand text-white font-bold shadow-glow hover:scale-[1.02] transition-transform">
+                Update Timer
+            </button>
+        </div>
+    </div>
+
+    <div id="standby-overlay" class="fixed inset-0 z-[100] bg-black text-white hidden flex-col items-center justify-center overflow-hidden">
+        <div class="absolute inset-0 z-0 pointer-events-none opacity-40">
+            <div class="absolute top-[-10%] left-[-10%] w-[600px] h-[600px] bg-brand-start/30 rounded-full blur-[150px] animate-pulse-slow"></div>
+            <div class="absolute bottom-[10%] right-[-5%] w-[500px] h-[500px] bg-brand-end/30 rounded-full blur-[120px] animate-float"></div>
+        </div>
+
+        <div id="standby-controls" class="absolute top-8 right-8 flex gap-4 z-50 transition-opacity duration-300">
+             <button id="standby-finish-btn" class="w-12 h-12 rounded-full bg-white/10 hover:bg-green-500/20 text-white/50 hover:text-green-400 flex items-center justify-center backdrop-blur-md transition-all">
+                <i data-lucide="check" class="w-6 h-6"></i>
+            </button>
+            <button id="exit-standby-btn" class="w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center backdrop-blur-md transition-all">
+                <i data-lucide="minimize" class="w-6 h-6"></i>
+            </button>
+        </div>
+
+        <div id="flip-clock-wrapper" class="relative z-10 flex flex-col items-center justify-center select-none">
+            <div class="mb-10 text-center">
+                <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 text-brand-mid text-sm font-bold uppercase tracking-widest backdrop-blur-md">
+                    <span id="standby-status-dot" class="w-2 h-2 rounded-full bg-brand-mid animate-pulse"></span>
+                    <span id="standby-status-text">Focusing</span>
+                </div>
+                <h1 id="standby-task-name" class="text-3xl font-bold mt-4 text-white/90">Deep Work</h1>
+            </div>
+
+            <div class="flip-clock-container" id="flip-clock"></div>
+
+            <button id="standby-toggle-btn" class="mt-16 w-20 h-20 rounded-full bg-gradient-brand shadow-glow hover:shadow-glow-lg hover:scale-105 active:scale-95 transition-transform flex items-center justify-center z-50">
+                <i id="standby-toggle-icon" data-lucide="pause" class="w-8 h-8 fill-white text-white"></i>
+            </button>
+
+            <p class="mt-8 text-white/30 text-xs font-mono">Double tap to exit</p>
+        </div>
+    </div>
+
+    <script type="module" src="timer.js"></script>
+    
+    <script>
+        lucide.createIcons();
+        const html = document.documentElement;
+        
+        // Theme Logic
+        if(localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            html.classList.add('dark');
+        }
+        document.getElementById('theme-toggle').addEventListener('click', () => {
+            html.classList.toggle('dark');
+            localStorage.theme = html.classList.contains('dark') ? 'dark' : 'light';
+        });
+
+        // Modal Logic
+        const modal = document.getElementById('settings-modal');
+        const modalContent = modal.querySelector('.glass-card');
+        document.getElementById('duration-btn').addEventListener('click', () => {
+            modal.classList.remove('opacity-0', 'pointer-events-none');
+            modalContent.classList.remove('translate-y-10');
+        });
+        const closeModal = () => {
+            modal.classList.add('opacity-0', 'pointer-events-none');
+            modalContent.classList.add('translate-y-10');
+        };
+        document.getElementById('close-modal').addEventListener('click', closeModal);
+        document.getElementById('save-duration').addEventListener('click', closeModal);
+        const slider = document.getElementById('duration-slider');
+        const valDisplay = document.getElementById('slider-value');
+        slider.addEventListener('input', (e) => {
+            valDisplay.textContent = e.target.value;
+        });
+
+        // Sidebar Toggle Logic (Imported from Homepage)
+        const taskbar = document.getElementById('taskbar');
+        const toggleBtn = document.getElementById('toggleSidebar');
+        const toggleIcon = document.getElementById('toggleIcon');
+        const navContainer = document.querySelector('.nav-container');
+        let isExpanded = true;
+
+        toggleBtn.addEventListener('click', () => {
+            isExpanded = !isExpanded;
+            if (isExpanded) {
+                taskbar.style.width = '80px';
+                taskbar.classList.remove('opacity-0', 'pointer-events-none'); 
+                toggleIcon.style.transform = 'rotate(0deg)';
+                navContainer.style.opacity = '1';
+            } else {
+                taskbar.style.width = '20px';
+                toggleIcon.style.transform = 'rotate(180deg)';
+                navContainer.style.opacity = '0'; 
+            }
+        });
+
+        taskbar.addEventListener('mouseenter', () => {
+            if (!isExpanded) {
+                taskbar.style.width = '80px';
+                navContainer.style.opacity = '1';
+                toggleIcon.style.transform = 'rotate(0deg)';
+            }
+        });
+
+        taskbar.addEventListener('mouseleave', () => {
+            if (!isExpanded) {
+                taskbar.style.width = '20px';
+                navContainer.style.opacity = '0';
+                toggleIcon.style.transform = 'rotate(180deg)';
+            }
+        });
+    </script>
+</body>
+</html>

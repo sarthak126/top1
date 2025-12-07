@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DisciplineX | Top 1% Club</title>
+    
+    <!-- Google Fonts: Poppins -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS (CDN for standalone file) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Tailwind Config -->
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Poppins', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            start: '#0EA5FF',
+                            mid: '#2B7BFF',
+                            end: '#3F6CFF',
+                        },
+                        glass: {
+                            light: 'rgba(255, 255, 255, 0.7)',
+                            dark: 'rgba(15, 23, 42, 0.6)',
+                            borderLight: 'rgba(255, 255, 255, 0.5)',
+                            borderDark: 'rgba(255, 255, 255, 0.1)',
+                        }
+                    },
+                    boxShadow: {
+                        'glow': '0 0 20px rgba(14, 165, 255, 0.5)',
+                        'glow-sm': '0 0 10px rgba(14, 165, 255, 0.3)',
+                    },
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'spin-slow': 'spin 12s linear infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-20px)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Custom CSS Variables & Utils */
+        :root {
+            --bg-body: #F0F4F8;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+        }
+
+        .dark {
+            --bg-body: #050505;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+        }
+
+        body {
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            transition: background-color 0.5s ease, color 0.5s ease;
+        }
+
+        /* Glassmorphism Classes */
+        .glass {
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.6);
+        }
+
+        .dark .glass {
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            background: rgba(10, 10, 10, 0.6);
+        }
+
+        .glass-card {
+            backdrop-filter: blur(12px);
+            border-radius: 24px;
+            transition: all 0.3s ease;
+        }
+
+        /* Gradient Text */
+        .text-gradient {
+            background: linear-gradient(135deg, #0EA5FF 0%, #2B7BFF 50%, #3F6CFF 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .bg-gradient-brand {
+            background: linear-gradient(135deg, #0EA5FF 0%, #2B7BFF 50%, #3F6CFF 100%);
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #2B7BFF;
+            border-radius: 4px;
+        }
+
+        /* Confetti Animation */
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: #0EA5FF;
+            animation: confetti-fall 2s linear forwards;
+            opacity: 0;
+        }
+        @keyframes confetti-fall {
+            0% { transform: translateY(-50px) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(100px) rotate(720deg); opacity: 0; }
+        }
+
+        /* Accordion transition */
+        .accordion-content {
+            transition: max-height 0.3s ease-out, opacity 0.3s ease-out;
+            max-height: 0;
+            overflow: hidden;
+            opacity: 0;
+        }
+        .accordion-content.active {
+            opacity: 1;
+        }
+        
+        /* 3D Tilt Effect Container */
+        .perspective-container {
+            perspective: 1000px;
+        }
+        .tilt-card {
+            transform-style: preserve-3d;
+            transition: transform 0.1s ease-out;
+        }
+    </style>
+</head>
+<body class="antialiased overflow-x-hidden relative">
+
+    <!-- Background Ambient Gradients -->
+    <div class="fixed inset-0 z-[-1] overflow-hidden pointer-events-none">
+        <div class="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-brand-start/20 rounded-full blur-[120px] animate-pulse-slow"></div>
+        <div class="absolute bottom-[10%] right-[-5%] w-[400px] h-[400px] bg-brand-end/20 rounded-full blur-[100px] animate-float"></div>
+    </div>
+
+    <!-- 1. HEADER -->
+    <header id="navbar" class="fixed top-0 w-full z-50 transition-all duration-300 border-b border-transparent">
+        <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+            <!-- Logo -->
+            <a href="#" class="flex items-center gap-2 group">
+                <div class="w-8 h-8 rounded-lg bg-gradient-brand flex items-center justify-center text-white font-bold text-lg shadow-glow-sm group-hover:shadow-glow transition-all">
+                    D
+                </div>
+                <span class="font-bold text-xl tracking-tight dark:text-white text-slate-900">Discipline<span class="text-brand-mid">X</span></span>
+            </a>
+
+            <!-- Nav Links (Desktop) -->
+            <nav class="hidden md:flex items-center gap-8 font-medium text-sm">
+                <a href="#features" class="hover:text-brand-mid transition-colors dark:text-gray-300 text-gray-600">Features</a>
+                <a href="#how-it-works" class="hover:text-brand-mid transition-colors dark:text-gray-300 text-gray-600">How It Works</a>
+                <a href="#leaderboard" class="hover:text-brand-mid transition-colors dark:text-gray-300 text-gray-600">Leaderboard</a>
+                <a href="#faq" class="hover:text-brand-mid transition-colors dark:text-gray-300 text-gray-600">FAQ</a>
+            </nav>
+
+            <!-- Right Actions -->
+            <div class="flex items-center gap-4">
+                <!-- Theme Toggle -->
+                <button id="theme-toggle" class="p-2 rounded-full hover:bg-black/5 dark:hover:bg-white/10 transition-colors" aria-label="Toggle Theme">
+                    <i data-lucide="sun" class="w-5 h-5 hidden dark:block text-yellow-400"></i>
+                    <i data-lucide="moon" class="w-5 h-5 block dark:hidden text-slate-600"></i>
+                </button>
+                
+                <a href="authenticationL.html" class="hidden sm:block px-5 py-2.5 rounded-full text-sm font-semibold text-white bg-gradient-brand hover:shadow-glow transition-all transform hover:-translate-y-0.5">
+                    Login
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <!-- 2. HERO SECTION -->
+        <section class="min-h-screen pt-32 pb-20 px-6 flex items-center relative perspective-container">
+            <div class="max-w-7xl mx-auto w-full grid lg:grid-cols-2 gap-16 items-center">
+                
+                <!-- Left: Content -->
+                <div class="space-y-8 z-10">
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-brand-start/30 bg-brand-start/10 text-brand-mid text-xs font-semibold tracking-wide uppercase">
+                        <span class="w-2 h-2 rounded-full bg-brand-mid animate-pulse"></span>
+                        Top 1% Club
+                    </div>
+                    
+                    <h1 class="text-5xl md:text-6xl lg:text-7xl font-bold leading-[1.1] tracking-tight dark:text-white text-slate-900">
+                        Become the <br>
+                        <span class="text-gradient">Most Focused</span> <br>
+                        Version of Yourself.
+                    </h1>
+                    
+                    <p class="text-lg md:text-xl dark:text-gray-400 text-gray-600 max-w-lg leading-relaxed">
+                        A synced Pomodoro system with streaks, leaderboards, and pro analytics designed to get you into deep flow state.
+                    </p>
+
+                    <div class="flex flex-col sm:flex-row gap-4 pt-4">
+                        <button class="px-8 py-4 rounded-full bg-gradient-brand text-white font-bold shadow-glow hover:shadow-glow-lg transition-all transform hover:-translate-y-1 text-lg flex items-center justify-center gap-2">
+                            Open App <i data-lucide="arrow-right" class="w-5 h-5"></i>
+                        </button>
+                        <button class="px-8 py-4 rounded-full border border-gray-300 dark:border-gray-700 hover:border-brand-mid dark:text-white text-slate-900 font-semibold backdrop-blur-sm transition-all flex items-center justify-center gap-2 hover:bg-brand-mid/5">
+                            <i data-lucide="play-circle" class="w-5 h-5"></i> View Demo
+                        </button>
+                    </div>
+
+                    <div class="flex items-center gap-4 pt-4">
+                        <div class="flex -space-x-3">
+                            <div class="w-10 h-10 rounded-full border-2 border-white dark:border-gray-900 bg-gray-200"></div>
+                            <div class="w-10 h-10 rounded-full border-2 border-white dark:border-gray-900 bg-gray-300"></div>
+                            <div class="w-10 h-10 rounded-full border-2 border-white dark:border-gray-900 bg-gray-400"></div>
+                        </div>
+                        <p class="text-sm font-medium dark:text-gray-400 text-gray-600">
+                            Used by <strong class="dark:text-white text-slate-900">2,000+</strong> focused students
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Right: Abstract CSS Mockup -->
+                <div class="relative lg:h-[600px] w-full flex items-center justify-center" id="hero-mockup">
+                    <!-- Background Glow -->
+                    <div class="absolute inset-0 bg-gradient-to-tr from-brand-start/30 to-purple-500/30 blur-[60px] rounded-full"></div>
+                    
+                    <!-- Main UI Card (Tilt Effect) -->
+                    <div class="tilt-card relative w-[320px] sm:w-[380px] aspect-[9/19] rounded-[40px] border-[8px] border-slate-900 bg-slate-900 shadow-2xl overflow-hidden animate-float">
+                        <!-- Screen Content -->
+                        <div class="absolute inset-0 bg-slate-950 flex flex-col items-center pt-12 relative overflow-hidden">
+                            <!-- Status Bar -->
+                            <div class="w-full px-6 flex justify-between text-gray-500 text-xs mb-8">
+                                <span>9:41</span>
+                                <div class="flex gap-1"><i data-lucide="wifi" class="w-3 h-3"></i><i data-lucide="battery" class="w-3 h-3"></i></div>
+                            </div>
+
+                            <!-- Circular Timer (Visual Only) -->
+                            <div class="relative w-48 h-48 mb-8 flex items-center justify-center">
+                                <div class="absolute inset-0 rounded-full border-4 border-slate-800"></div>
+                                <svg class="w-full h-full transform -rotate-90 drop-shadow-[0_0_10px_rgba(14,165,255,0.5)]">
+                                    <circle cx="96" cy="96" r="88" stroke="url(#grad1)" stroke-width="6" fill="transparent" stroke-dasharray="552" stroke-dashoffset="138" stroke-linecap="round"></circle>
+                                    <defs>
+                                        <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="0%">
+                                            <stop offset="0%" style="stop-color:#0EA5FF;stop-opacity:1" />
+                                            <stop offset="100%" style="stop-color:#3F6CFF;stop-opacity:1" />
+                                        </linearGradient>
+                                    </defs>
+                                </svg>
+                                <div class="absolute text-center">
+                                    <span class="block text-4xl font-bold text-white">25:00</span>
+                                    <span class="text-xs text-brand-mid uppercase tracking-widest">Focus</span>
+                                </div>
+                            </div>
+
+                            <!-- Stats Row -->
+                            <div class="w-full px-6 grid grid-cols-2 gap-4 mb-6">
+                                <div class="bg-white/5 rounded-2xl p-3 backdrop-blur-md">
+                                    <div class="text-gray-400 text-xs">Streak</div>
+                                    <div class="text-white font-bold text-lg flex items-center gap-1">
+                                        <i data-lucide="flame" class="w-4 h-4 text-orange-500"></i> 12
+                                    </div>
+                                </div>
+                                <div class="bg-white/5 rounded-2xl p-3 backdrop-blur-md">
+                                    <div class="text-gray-400 text-xs">Today</div>
+                                    <div class="text-white font-bold text-lg">4h 20m</div>
+                                </div>
+                            </div>
+
+                             <!-- Bottom Nav -->
+                             <div class="mt-auto w-full h-20 bg-white/5 backdrop-blur-lg flex justify-around items-center px-4 border-t border-white/5">
+                                 <div class="p-2 text-brand-mid"><i data-lucide="clock" class="w-6 h-6"></i></div>
+                                 <div class="p-2 text-gray-600"><i data-lucide="bar-chart-2" class="w-6 h-6"></i></div>
+                                 <div class="p-2 text-gray-600"><i data-lucide="users" class="w-6 h-6"></i></div>
+                             </div>
+                        </div>
+                    </div>
+
+                    <!-- Floating Notification Card (Parallax) -->
+                    <div class="absolute top-[20%] left-[-20px] sm:left-10 glass p-4 rounded-2xl flex items-center gap-3 animate-float" style="animation-delay: 1s;">
+                        <div class="w-10 h-10 rounded-full bg-green-500/20 flex items-center justify-center text-green-500">
+                            <i data-lucide="check" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <p class="text-xs text-gray-500 dark:text-gray-400">Task Complete</p>
+                            <p class="text-sm font-bold dark:text-white text-slate-900">Read 20 pages</p>
+                        </div>
+                    </div>
+
+                    <!-- Floating Badge -->
+                    <div class="absolute bottom-[20%] right-[-10px] sm:right-10 glass px-4 py-2 rounded-full flex items-center gap-2 animate-float" style="animation-delay: 2s;">
+                        <span class="text-2xl">🔥</span>
+                        <span class="font-bold text-brand-mid">Top 1%</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. CORE VALUE CARDS -->
+        <section class="py-20 px-6">
+            <div class="max-w-7xl mx-auto grid md:grid-cols-3 gap-8">
+                <!-- Card 1 -->
+                <div class="glass glass-card p-8 group hover:-translate-y-2 hover:shadow-glow-sm cursor-default">
+                    <div class="w-14 h-14 rounded-2xl bg-gradient-brand flex items-center justify-center text-white mb-6 shadow-lg group-hover:scale-110 transition-transform">
+                        <i data-lucide="flame" class="w-7 h-7"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3 dark:text-white text-slate-900">Streaks That Keep You On Track</h3>
+                    <p class="dark:text-gray-400 text-gray-600 leading-relaxed">
+                        Don't break the chain. Visualize your consistency and build habits that stick forever.
+                    </p>
+                </div>
+
+                <!-- Card 2 -->
+                <div class="glass glass-card p-8 group hover:-translate-y-2 hover:shadow-glow-sm cursor-default">
+                    <div class="w-14 h-14 rounded-2xl bg-slate-800 dark:bg-white flex items-center justify-center text-white dark:text-slate-900 mb-6 shadow-lg group-hover:scale-110 transition-transform">
+                        <i data-lucide="smartphone" class="w-7 h-7"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3 dark:text-white text-slate-900">Real-Time Cross-Device Sync</h3>
+                    <p class="dark:text-gray-400 text-gray-600 leading-relaxed">
+                        Start on your phone, continue on your laptop. Your focus state follows you everywhere.
+                    </p>
+                </div>
+
+                <!-- Card 3 -->
+                <div class="glass glass-card p-8 group hover:-translate-y-2 hover:shadow-glow-sm cursor-default">
+                    <div class="w-14 h-14 rounded-2xl bg-gradient-brand flex items-center justify-center text-white mb-6 shadow-lg group-hover:scale-110 transition-transform">
+                        <i data-lucide="trophy" class="w-7 h-7"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3 dark:text-white text-slate-900">Leaderboard for Motivation</h3>
+                    <p class="dark:text-gray-400 text-gray-600 leading-relaxed">
+                        Compete with the top 1% of focused students globally. Earn your spot on the podium.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. FEATURE SECTIONS (Alternating) -->
+        <section id="features" class="py-20 px-6 space-y-24 max-w-7xl mx-auto">
+            
+            <!-- Row 1: Focus Rings -->
+            <div class="flex flex-col md:flex-row items-center gap-12 lg:gap-20">
+                <div class="w-full md:w-1/2 flex justify-center">
+                    <div class="relative w-64 h-64 md:w-80 md:h-80 rounded-full border border-gray-200 dark:border-white/10 flex items-center justify-center shadow-[0_0_50px_rgba(14,165,255,0.2)]">
+                        <!-- Abstract Visual -->
+                        <div class="absolute inset-2 rounded-full border-4 border-dashed border-brand-start/40 animate-spin-slow"></div>
+                        <div class="text-center z-10">
+                            <h4 class="text-4xl font-bold dark:text-white text-slate-900">25:00</h4>
+                            <span class="text-brand-mid uppercase tracking-widest text-sm">Deep Work</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="w-full md:w-1/2">
+                    <h2 class="text-3xl font-bold mb-4 dark:text-white text-slate-900">Pomodoro Timer with Focus Rings</h2>
+                    <p class="text-lg dark:text-gray-400 text-gray-600 mb-6">
+                        Visual cues help you stay in the zone. Customize your work/break intervals and watch your focus rings close as you complete sessions.
+                    </p>
+                    <a href="#" class="text-brand-mid font-semibold hover:text-brand-start flex items-center gap-1">
+                        Learn More <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Row 2: Analytics (Reverse) -->
+            <div class="flex flex-col md:flex-row-reverse items-center gap-12 lg:gap-20">
+                <div class="w-full md:w-1/2 flex justify-center">
+                    <div class="w-full max-w-sm glass p-6 rounded-2xl border border-gray-200 dark:border-white/10">
+                        <!-- CSS Bar Chart -->
+                        <div class="flex items-end justify-between h-40 gap-2">
+                            <div class="w-full bg-brand-start/20 rounded-t-lg h-[40%] relative group"><div class="absolute bottom-full mb-1 w-full text-center text-xs opacity-0 group-hover:opacity-100 transition-opacity dark:text-white">2h</div></div>
+                            <div class="w-full bg-brand-start/40 rounded-t-lg h-[60%] relative group"><div class="absolute bottom-full mb-1 w-full text-center text-xs opacity-0 group-hover:opacity-100 transition-opacity dark:text-white">4h</div></div>
+                            <div class="w-full bg-gradient-brand rounded-t-lg h-[85%] relative group shadow-glow-sm"><div class="absolute bottom-full mb-1 w-full text-center text-xs opacity-0 group-hover:opacity-100 transition-opacity dark:text-white font-bold">6h</div></div>
+                            <div class="w-full bg-brand-start/30 rounded-t-lg h-[50%] relative group"><div class="absolute bottom-full mb-1 w-full text-center text-xs opacity-0 group-hover:opacity-100 transition-opacity dark:text-white">3h</div></div>
+                            <div class="w-full bg-brand-start/50 rounded-t-lg h-[70%] relative group"><div class="absolute bottom-full mb-1 w-full text-center text-xs opacity-0 group-hover:opacity-100 transition-opacity dark:text-white">5h</div></div>
+                        </div>
+                        <div class="flex justify-between mt-2 text-xs text-gray-500">
+                            <span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="w-full md:w-1/2">
+                    <h2 class="text-3xl font-bold mb-4 dark:text-white text-slate-900">Daily & Weekly Focus Analytics</h2>
+                    <p class="text-lg dark:text-gray-400 text-gray-600 mb-6">
+                        Track your peak productivity hours. Our heatmaps and bar charts show you exactly when you work best so you can optimize your schedule.
+                    </p>
+                    <a href="#" class="text-brand-mid font-semibold hover:text-brand-start flex items-center gap-1">
+                        View Stats <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Row 3: Leaderboard -->
+            <div class="flex flex-col md:flex-row items-center gap-12 lg:gap-20">
+                <div class="w-full md:w-1/2 flex justify-center">
+                    <div class="w-full max-w-sm glass p-4 rounded-2xl border border-gray-200 dark:border-white/10 space-y-3">
+                        <div class="flex items-center gap-3 p-3 rounded-xl bg-brand-start/10 border border-brand-start/20">
+                            <span class="font-bold text-brand-mid">#1</span>
+                            <div class="w-8 h-8 rounded-full bg-gray-300"></div>
+                            <div class="flex-1 font-medium dark:text-white text-slate-900">Alex M.</div>
+                            <span class="font-mono text-sm dark:text-gray-300">142h</span>
+                        </div>
+                        <div class="flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition-colors">
+                            <span class="font-bold text-gray-500">#2</span>
+                            <div class="w-8 h-8 rounded-full bg-gray-300"></div>
+                            <div class="flex-1 font-medium dark:text-white text-slate-900">Sarah K.</div>
+                            <span class="font-mono text-sm dark:text-gray-300">138h</span>
+                        </div>
+                        <div class="flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition-colors">
+                            <span class="font-bold text-gray-500">#3</span>
+                            <div class="w-8 h-8 rounded-full bg-gray-300"></div>
+                            <div class="flex-1 font-medium dark:text-white text-slate-900">Davide</div>
+                            <span class="font-mono text-sm dark:text-gray-300">120h</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="w-full md:w-1/2">
+                    <h2 class="text-3xl font-bold mb-4 dark:text-white text-slate-900">Community Leaderboard</h2>
+                    <p class="text-lg dark:text-gray-400 text-gray-600 mb-6">
+                        Gamify your studies. See where you rank among friends and the global community to stay accountable.
+                    </p>
+                    <a href="#" class="text-brand-mid font-semibold hover:text-brand-start flex items-center gap-1">
+                        Join Club <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- 5. HOW IT WORKS -->
+        <section id="how-it-works" class="py-20 px-6 bg-white/50 dark:bg-white/5">
+            <div class="max-w-7xl mx-auto">
+                <div class="text-center mb-16">
+                    <h2 class="text-3xl md:text-4xl font-bold dark:text-white text-slate-900 mb-4">How It Works</h2>
+                    <p class="text-gray-500 max-w-2xl mx-auto">Three simple steps to master your productivity.</p>
+                </div>
+
+                <div class="grid md:grid-cols-3 gap-8">
+                    <!-- Step 1 -->
+                    <div class="relative flex flex-col items-center text-center">
+                        <div class="w-16 h-16 rounded-2xl bg-slate-200 dark:bg-slate-800 flex items-center justify-center text-2xl font-bold mb-6 relative z-10">1</div>
+                        <div class="hidden md:block absolute top-8 left-1/2 w-full h-0.5 bg-gradient-to-r from-transparent via-gray-300 dark:via-gray-700 to-transparent z-0"></div>
+                        <h3 class="text-xl font-bold mb-2 dark:text-white text-slate-900">Set Micro Goals</h3>
+                        <p class="text-sm dark:text-gray-400 text-gray-600 px-4">Break big tasks into 25-minute focused chunks to prevent burnout.</p>
+                    </div>
+
+                    <!-- Step 2 -->
+                    <div class="relative flex flex-col items-center text-center">
+                        <div class="w-16 h-16 rounded-2xl bg-gradient-brand text-white flex items-center justify-center text-2xl font-bold mb-6 shadow-glow relative z-10">2</div>
+                        <div class="hidden md:block absolute top-8 left-1/2 w-full h-0.5 bg-gradient-to-r from-transparent via-gray-300 dark:via-gray-700 to-transparent z-0"></div>
+                        <h3 class="text-xl font-bold mb-2 dark:text-white text-slate-900">Focus with Timer</h3>
+                        <p class="text-sm dark:text-gray-400 text-gray-600 px-4">Eliminate distractions. The app blocks notifications while the timer runs.</p>
+                    </div>
+
+                    <!-- Step 3 -->
+                    <div class="relative flex flex-col items-center text-center">
+                        <div class="w-16 h-16 rounded-2xl bg-slate-200 dark:bg-slate-800 flex items-center justify-center text-2xl font-bold mb-6 relative z-10">3</div>
+                        <h3 class="text-xl font-bold mb-2 dark:text-white text-slate-900">Grow Streaks</h3>
+                        <p class="text-sm dark:text-gray-400 text-gray-600 px-4">Climb the ranks and earn badges as you accumulate focus hours.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 6. INTERACTIVE DEMO WIDGET -->
+        <section class="py-24 px-6 relative overflow-hidden">
+            <div class="max-w-xl mx-auto text-center relative z-10">
+                <h2 class="text-3xl font-bold mb-8 dark:text-white text-slate-900">Try It Now</h2>
+                
+                <div class="glass glass-card p-8 md:p-12 shadow-2xl relative overflow-hidden" id="demo-card">
+                    <div id="confetti-container" class="absolute inset-0 pointer-events-none overflow-hidden"></div>
+                    
+                    <div class="relative w-48 h-48 mx-auto mb-8">
+                        <!-- Progress Ring SVG -->
+                        <svg class="w-full h-full transform -rotate-90">
+                            <!-- Background Circle -->
+                            <circle cx="96" cy="96" r="88" stroke="currentColor" stroke-width="8" fill="transparent" class="text-gray-200 dark:text-slate-700" />
+                            <!-- Progress Circle -->
+                            <circle id="demo-progress" cx="96" cy="96" r="88" stroke="url(#demo-grad)" stroke-width="8" fill="transparent" 
+                                stroke-dasharray="552" 
+                                stroke-dashoffset="0" 
+                                stroke-linecap="round"
+                                class="transition-[stroke-dashoffset] duration-1000 ease-linear" />
+                            <defs>
+                                <linearGradient id="demo-grad" x1="0%" y1="0%" x2="100%" y2="0%">
+                                    <stop offset="0%" style="stop-color:#0EA5FF;stop-opacity:1" />
+                                    <stop offset="100%" style="stop-color:#3F6CFF;stop-opacity:1" />
+                                </linearGradient>
+                            </defs>
+                        </svg>
+                        
+                        <!-- Center Text -->
+                        <div class="absolute inset-0 flex flex-col items-center justify-center">
+                            <span id="demo-timer" class="text-5xl font-bold dark:text-white text-slate-900 font-mono">00:10</span>
+                            <span class="text-xs uppercase tracking-widest text-brand-mid mt-2">Demo Mode</span>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-center gap-4">
+                        <button id="start-btn" class="w-14 h-14 rounded-full bg-gradient-brand text-white flex items-center justify-center shadow-glow hover:scale-105 transition-transform">
+                            <i data-lucide="play" class="w-6 h-6 ml-1"></i>
+                        </button>
+                        <button id="reset-btn" class="w-14 h-14 rounded-full border border-gray-300 dark:border-white/20 dark:text-white text-slate-700 flex items-center justify-center hover:bg-white/5 transition-colors">
+                            <i data-lucide="rotate-ccw" class="w-6 h-6"></i>
+                        </button>
+                    </div>
+                    
+                    <p class="mt-6 text-sm text-gray-500">Click play to see the focus visualization.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 7. LEADERBOARD TEASER -->
+        <section id="leaderboard" class="py-20 px-6">
+            <div class="max-w-4xl mx-auto">
+                <div class="glass glass-card overflow-hidden">
+                    <div class="p-6 border-b border-gray-200 dark:border-white/10 flex justify-between items-center">
+                        <h3 class="text-xl font-bold dark:text-white text-slate-900 flex items-center gap-2">
+                            <i data-lucide="crown" class="w-5 h-5 text-yellow-500"></i> Top Performers
+                        </h3>
+                        <span class="text-xs font-medium px-2 py-1 rounded bg-green-500/10 text-green-500">Live Updating</span>
+                    </div>
+                    
+                    <div class="p-6">
+                        <div class="grid gap-4">
+                            <!-- Headers -->
+                            <div class="grid grid-cols-12 text-xs uppercase tracking-wider text-gray-500 pb-2">
+                                <div class="col-span-1">Rank</div>
+                                <div class="col-span-7">User</div>
+                                <div class="col-span-4 text-right">Time Focused</div>
+                            </div>
+                            
+                            <!-- Items -->
+                            <div class="grid grid-cols-12 items-center p-3 rounded-lg bg-gradient-brand/10 border border-brand-start/20">
+                                <div class="col-span-1 font-bold text-brand-mid">1</div>
+                                <div class="col-span-7 flex items-center gap-3">
+                                    <div class="w-8 h-8 rounded-full bg-gray-300"></div>
+                                    <span class="font-bold dark:text-white text-slate-900">Michael S.</span>
+                                </div>
+                                <div class="col-span-4 text-right font-mono font-bold text-brand-mid">142h 30m</div>
+                            </div>
+                            
+                            <div class="grid grid-cols-12 items-center p-3 rounded-lg hover:bg-white/5">
+                                <div class="col-span-1 font-bold text-gray-500">2</div>
+                                <div class="col-span-7 flex items-center gap-3">
+                                    <div class="w-8 h-8 rounded-full bg-gray-300"></div>
+                                    <span class="dark:text-gray-200 text-slate-700">Jessica L.</span>
+                                </div>
+                                <div class="col-span-4 text-right font-mono dark:text-gray-300 text-slate-600">138h 15m</div>
+                            </div>
+                            
+                             <div class="grid grid-cols-12 items-center p-3 rounded-lg hover:bg-white/5">
+                                <div class="col-span-1 font-bold text-gray-500">3</div>
+                                <div class="col-span-7 flex items-center gap-3">
+                                    <div class="w-8 h-8 rounded-full bg-gray-300"></div>
+                                    <span class="dark:text-gray-200 text-slate-700">David Chen</span>
+                                </div>
+                                <div class="col-span-4 text-right font-mono dark:text-gray-300 text-slate-600">121h 00m</div>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-6 text-center">
+                            <button class="text-sm font-semibold text-brand-mid hover:text-brand-end transition-colors">View Full Leaderboard</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 8. FAQ SECTION -->
+        <section id="faq" class="py-20 px-6 max-w-3xl mx-auto">
+            <h2 class="text-3xl font-bold text-center mb-12 dark:text-white text-slate-900">Frequently Asked Questions</h2>
+            
+            <div class="space-y-4">
+                <!-- FAQ 1 -->
+                <div class="glass glass-card overflow-hidden">
+                    <button class="w-full p-6 text-left flex justify-between items-center focus:outline-none" onclick="toggleAccordion(this)">
+                        <span class="font-semibold dark:text-white text-slate-900">How does cross-device sync work?</span>
+                        <i data-lucide="chevron-down" class="w-5 h-5 transition-transform duration-300"></i>
+                    </button>
+                    <div class="accordion-content px-6 text-gray-500 dark:text-gray-400">
+                        <div class="pb-6">
+                            We use real-time cloud database technology. As soon as you pause a timer on your phone, it updates instantly on your laptop or tablet dashboard.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FAQ 2 -->
+                <div class="glass glass-card overflow-hidden">
+                    <button class="w-full p-6 text-left flex justify-between items-center focus:outline-none" onclick="toggleAccordion(this)">
+                        <span class="font-semibold dark:text-white text-slate-900">Is my data private?</span>
+                        <i data-lucide="chevron-down" class="w-5 h-5 transition-transform duration-300"></i>
+                    </button>
+                    <div class="accordion-content px-6 text-gray-500 dark:text-gray-400">
+                        <div class="pb-6">
+                            Yes. Your focus data is encrypted. We only share your total focus hours on the leaderboard if you opt-in to the public profile feature.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FAQ 3 -->
+                <div class="glass glass-card overflow-hidden">
+                    <button class="w-full p-6 text-left flex justify-between items-center focus:outline-none" onclick="toggleAccordion(this)">
+                        <span class="font-semibold dark:text-white text-slate-900">How do streaks reset?</span>
+                        <i data-lucide="chevron-down" class="w-5 h-5 transition-transform duration-300"></i>
+                    </button>
+                    <div class="accordion-content px-6 text-gray-500 dark:text-gray-400">
+                        <div class="pb-6">
+                            Streaks reset if you do not complete at least one 25-minute focus session within a 24-hour window (based on your local timezone).
+                        </div>
+                    </div>
+                </div>
+                
+                 <!-- FAQ 4 -->
+                <div class="glass glass-card overflow-hidden">
+                    <button class="w-full p-6 text-left flex justify-between items-center focus:outline-none" onclick="toggleAccordion(this)">
+                        <span class="font-semibold dark:text-white text-slate-900">Will it stay free?</span>
+                        <i data-lucide="chevron-down" class="w-5 h-5 transition-transform duration-300"></i>
+                    </button>
+                    <div class="accordion-content px-6 text-gray-500 dark:text-gray-400">
+                        <div class="pb-6">
+                            The core timer and stats are free forever. Leaderboard access and advanced cloud sync are part of the Top 1% Club premium tier.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- 9. FOOTER -->
+    <footer class="border-t border-gray-200 dark:border-white/10 bg-white/50 dark:bg-black/20 backdrop-blur-lg pt-16 pb-8 px-6">
+        <div class="max-w-7xl mx-auto">
+            <div class="grid md:grid-cols-4 gap-12 mb-12">
+                <div class="col-span-1 md:col-span-2">
+                    <a href="#" class="flex items-center gap-2 mb-4">
+                         <div class="w-6 h-6 rounded bg-gradient-brand flex items-center justify-center text-white font-bold text-xs">D</div>
+                        <span class="font-bold text-lg dark:text-white text-slate-900">DisciplineX</span>
+                    </a>
+                    <p class="text-sm text-gray-500 max-w-xs">
+                        Join the top 1% of students and professionals mastering their focus. Built for those who do the work.
+                    </p>
+                </div>
+                
+                <div>
+                    <h4 class="font-bold mb-4 dark:text-white text-slate-900">Product</h4>
+                    <ul class="space-y-2 text-sm text-gray-500">
+                        <li><a href="#" class="hover:text-brand-mid">Features</a></li>
+                        <li><a href="#" class="hover:text-brand-mid">Leaderboard</a></li>
+                        <li><a href="#" class="hover:text-brand-mid">Download</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="font-bold mb-4 dark:text-white text-slate-900">Legal</h4>
+                    <ul class="space-y-2 text-sm text-gray-500">
+                        <li><a href="#" class="hover:text-brand-mid">Privacy Policy</a></li>
+                        <li><a href="#" class="hover:text-brand-mid">Terms of Service</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-200 dark:border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+                <p class="text-xs text-gray-500">&copy; 2023 DisciplineX Inc. All rights reserved.</p>
+                <div class="flex gap-4 text-gray-500">
+                    <a href="#" class="hover:text-brand-mid"><i data-lucide="twitter" class="w-5 h-5"></i></a>
+                    <a href="#" class="hover:text-brand-mid"><i data-lucide="instagram" class="w-5 h-5"></i></a>
+                    <a href="#" class="hover:text-brand-mid"><i data-lucide="linkedin" class="w-5 h-5"></i></a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script>
+        // 1. Icon Initialization
+        lucide.createIcons();
+
+        // 2. Theme Toggle Logic
+        const themeToggleBtn = document.getElementById('theme-toggle');
+        const html = document.documentElement;
+        
+        // Check local storage or system preference
+        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            html.classList.add('dark');
+        } else {
+            html.classList.remove('dark');
+        }
+
+        themeToggleBtn.addEventListener('click', () => {
+            html.classList.toggle('dark');
+            if (html.classList.contains('dark')) {
+                localStorage.theme = 'dark';
+            } else {
+                localStorage.theme = 'light';
+            }
+        });
+
+        // 3. Navbar Sticky Glass Effect
+        const navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                navbar.classList.add('glass', 'shadow-sm');
+                navbar.classList.remove('border-transparent');
+                navbar.classList.add('border-white/10');
+            } else {
+                navbar.classList.remove('glass', 'shadow-sm', 'border-white/10');
+                navbar.classList.add('border-transparent');
+            }
+        });
+
+        // 4. Accordion Logic
+        function toggleAccordion(button) {
+            const content = button.nextElementSibling;
+            const icon = button.querySelector('i');
+            
+            // Toggle current
+            if (content.style.maxHeight) {
+                content.style.maxHeight = null;
+                content.classList.remove('active');
+                icon.style.transform = 'rotate(0deg)';
+            } else {
+                content.style.maxHeight = content.scrollHeight + "px";
+                content.classList.add('active');
+                icon.style.transform = 'rotate(180deg)';
+            }
+        }
+
+        // 5. Interactive Demo Widget Logic
+        const startBtn = document.getElementById('start-btn');
+        const resetBtn = document.getElementById('reset-btn');
+        const progressCircle = document.getElementById('demo-progress');
+        const timerText = document.getElementById('demo-timer');
+        const confettiContainer = document.getElementById('confetti-container');
+        
+        let timerInterval;
+        let isRunning = false;
+        const totalTime = 10; // 10 seconds for demo
+        let timeLeft = totalTime;
+        
+        // Circumference of circle with r=88 is 2 * pi * 88 approx 552
+        const circumference = 552; 
+        
+        function updateTimer() {
+            timeLeft--;
+            
+            // Update Text
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            timerText.textContent = `00:${seconds < 10 ? '0' : ''}${seconds}`;
+            
+            // Update Circle
+            const offset = circumference - (timeLeft / totalTime) * circumference;
+            progressCircle.style.strokeDashoffset = offset;
+            
+            if (timeLeft <= 0) {
+                clearInterval(timerInterval);
+                isRunning = false;
+                timerText.textContent = "Done!";
+                triggerConfetti();
+                
+                // Reset visual button state
+                const icon = startBtn.querySelector('i');
+                // Could change icon back to play or replay logic
+            }
+        }
+
+        startBtn.addEventListener('click', () => {
+            if (isRunning || timeLeft <= 0) return;
+            
+            isRunning = true;
+            // Change play icon to pause (simplified for demo: just starts)
+            timerInterval = setInterval(updateTimer, 1000);
+        });
+
+        resetBtn.addEventListener('click', () => {
+            clearInterval(timerInterval);
+            isRunning = false;
+            timeLeft = totalTime;
+            timerText.textContent = "00:10";
+            progressCircle.style.strokeDashoffset = 0;
+            confettiContainer.innerHTML = ''; // Clear confetti
+        });
+
+        function triggerConfetti() {
+            for (let i = 0; i < 30; i++) {
+                const confetti = document.createElement('div');
+                confetti.classList.add('confetti');
+                confetti.style.left = Math.random() * 100 + '%';
+                confetti.style.animationDelay = Math.random() * 1 + 's';
+                confetti.style.backgroundColor = ['#0EA5FF', '#2B7BFF', '#FFD700', '#FF6B6B'][Math.floor(Math.random() * 4)];
+                confettiContainer.appendChild(confetti);
+                
+                // Cleanup
+                setTimeout(() => confetti.remove(), 2500);
+            }
+        }
+
+        // 6. Tilt Effect for Hero Mockup (Subtle 3D)
+        const heroMockup = document.getElementById('hero-mockup');
+        const tiltCard = heroMockup.querySelector('.tilt-card');
+
+        heroMockup.addEventListener('mousemove', (e) => {
+            const rect = heroMockup.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            
+            const centerX = rect.width / 2;
+            const centerY = rect.height / 2;
+            
+            const rotateX = ((y - centerY) / centerY) * -10; // Max 10deg rotation
+            const rotateY = ((x - centerX) / centerX) * 10;
+
+            tiltCard.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+        });
+
+        heroMockup.addEventListener('mouseleave', () => {
+            tiltCard.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg)`;
+        });
+
+    </script>
+</body>
+</html>

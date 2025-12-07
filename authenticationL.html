@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Join DisciplineX | Top 1% Club</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Poppins', 'sans-serif'] },
+                    colors: {
+                        brand: { start: '#0EA5FF', mid: '#2B7BFF', end: '#3F6CFF' },
+                        glass: { light: 'rgba(255, 255, 255, 0.7)', dark: 'rgba(15, 23, 42, 0.6)' }
+                    },
+                    boxShadow: {
+                        'glow': '0 0 20px rgba(14, 165, 255, 0.5)',
+                        'glow-sm': '0 0 10px rgba(14, 165, 255, 0.3)',
+                    },
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-20px)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        :root { --bg-body: #F0F4F8; --text-main: #1e293b; }
+        .dark { --bg-body: #050505; --text-main: #f8fafc; }
+        body { background-color: var(--bg-body); color: var(--text-main); transition: background-color 0.5s ease, color 0.5s ease; }
+        
+        .glass {
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.6);
+        }
+        .dark .glass {
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            background: rgba(10, 10, 10, 0.6);
+        }
+        .input-glass {
+            background: rgba(255, 255, 255, 0.5);
+            border: 1px solid rgba(203, 213, 225, 0.6);
+            transition: all 0.3s ease;
+        }
+        .dark .input-glass {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+        .input-glass:focus {
+            outline: none;
+            border-color: #2B7BFF;
+            box-shadow: 0 0 0 2px rgba(43, 123, 255, 0.2);
+        }
+        .bg-gradient-brand { background: linear-gradient(135deg, #0EA5FF 0%, #2B7BFF 50%, #3F6CFF 100%); }
+        .view-section { display: none; opacity: 0; transition: opacity 0.4s ease-in-out; }
+        .view-section.active { display: flex; opacity: 1; }
+        
+        /* Utility for error messages */
+        .error-msg { color: #ef4444; font-size: 0.8rem; margin-top: 0.5rem; display: none; }
+    </style>
+</head>
+<body class="antialiased min-h-screen relative overflow-hidden flex flex-col">
+
+    <div class="fixed inset-0 z-[-1] overflow-hidden pointer-events-none">
+        <div class="absolute top-[-10%] right-[-10%] w-[600px] h-[600px] bg-brand-start/20 rounded-full blur-[120px] animate-pulse-slow"></div>
+        <div class="absolute bottom-[10%] left-[-5%] w-[500px] h-[500px] bg-brand-end/20 rounded-full blur-[100px] animate-float"></div>
+    </div>
+
+    <header class="absolute top-0 w-full z-50 p-6">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+            <a href="#" class="flex items-center gap-2 group">
+                <div class="w-8 h-8 rounded-lg bg-gradient-brand flex items-center justify-center text-white font-bold text-lg shadow-glow-sm">D</div>
+                <span class="font-bold text-xl tracking-tight dark:text-white text-slate-900">Discipline<span class="text-brand-mid">X</span></span>
+            </a>
+            <button id="theme-toggle" class="p-2 rounded-full hover:bg-black/5 dark:hover:bg-white/10 transition-colors">
+                <i data-lucide="sun" class="w-5 h-5 hidden dark:block text-yellow-400"></i>
+                <i data-lucide="moon" class="w-5 h-5 block dark:hidden text-slate-600"></i>
+            </button>
+        </div>
+    </header>
+
+    <main class="flex-grow flex items-center justify-center p-4 sm:p-6 pt-24">
+        
+        <div id="auth-error" class="error-msg w-full max-w-md mb-4 text-center p-2 bg-red-100/10 rounded-lg border border-red-500/20 backdrop-blur-sm" style="display:none"></div>
+
+        <section id="login-view" class="view-section active w-full max-w-md glass rounded-3xl shadow-2xl overflow-hidden relative">
+            <div class="w-full p-8 md:p-10 flex flex-col justify-center relative z-10">
+                <div class="mb-8 text-center">
+                    <h1 class="text-3xl font-bold dark:text-white text-slate-900 mb-2">Welcome Back</h1>
+                    <p class="text-sm dark:text-gray-400 text-gray-500">Enter your details to access your focus dashboard.</p>
+                </div>
+
+                <form id="login-form" class="space-y-5">
+                    <div class="space-y-1">
+                        <label class="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">Email</label>
+                        <div class="relative">
+                            <i data-lucide="mail" class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400"></i>
+                            <input id="login-email" type="email" placeholder="student@example.com" class="w-full pl-10 pr-4 py-3 rounded-xl input-glass text-sm" required>
+                        </div>
+                    </div>
+
+                    <div class="space-y-1">
+                        <label class="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">Password</label>
+                        <div class="relative">
+                            <i data-lucide="lock" class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400"></i>
+                            <input id="login-password" type="password" placeholder="••••••••" class="w-full pl-10 pr-4 py-3 rounded-xl input-glass text-sm" required>
+                        </div>
+                    </div>
+
+                    <div id="login-error" class="error-msg"></div>
+
+                    <button id="login-submit" type="submit" class="w-full py-3.5 rounded-xl bg-gradient-brand text-white font-bold shadow-glow hover:shadow-glow-lg transition-all transform hover:-translate-y-0.5">
+                        Sign In
+                    </button>
+                </form>
+
+                <div class="mt-6">
+                    <div class="relative">
+                        <div class="absolute inset-0 flex items-center"><div class="w-full border-t border-gray-200 dark:border-white/10"></div></div>
+                        <div class="relative flex justify-center text-sm">
+                            <span class="px-2 bg-[#F0F4F8] dark:bg-[#0A0A0A] text-gray-500 rounded-full">Or continue with</span>
+                        </div>
+                    </div>
+
+                    <div class="mt-6">
+                        <button id="google-signin" type="button" class="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-gray-200 dark:border-white/10 hover:bg-white/5 transition-colors dark:text-white">
+                            <svg class="w-5 h-5" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+                            <span class="text-sm font-medium">Google</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="mt-8 text-center text-sm text-gray-500">
+                    Don't have an account? 
+                    <button onclick="toggleView('signup')" class="text-brand-mid font-semibold hover:underline">Create Account</button>
+                </div>
+            </div>
+        </section>
+
+
+        <section id="signup-view" class="view-section w-full max-w-md glass rounded-3xl shadow-2xl overflow-hidden relative">
+            <div class="w-full p-8 md:p-10 flex flex-col justify-center relative z-10">
+                <div class="mb-6 text-center">
+                    <h1 class="text-3xl font-bold dark:text-white text-slate-900 mb-2">Join the Top 1%</h1>
+                    <p class="text-sm dark:text-gray-400 text-gray-500">Start your journey to deeper focus today.</p>
+                </div>
+
+                <form id="signup-form" class="space-y-4">
+                    <div class="space-y-1">
+                        <label class="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">Full Name</label>
+                        <div class="relative">
+                            <i data-lucide="user" class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400"></i>
+                            <input id="signup-name" type="text" placeholder="John Doe" class="w-full pl-10 pr-4 py-3 rounded-xl input-glass text-sm" required>
+                        </div>
+                    </div>
+
+                    <div class="space-y-1">
+                        <label class="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">Email</label>
+                        <div class="relative">
+                            <i data-lucide="mail" class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400"></i>
+                            <input id="signup-email" type="email" placeholder="student@example.com" class="w-full pl-10 pr-4 py-3 rounded-xl input-glass text-sm" required>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="space-y-1">
+                            <label class="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">Password</label>
+                            <input id="signup-password" type="password" placeholder="••••••••" class="w-full px-4 py-3 rounded-xl input-glass text-sm" required>
+                        </div>
+                        <div class="space-y-1">
+                            <label class="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">Confirm</label>
+                            <input id="signup-confirm" type="password" placeholder="••••••••" class="w-full px-4 py-3 rounded-xl input-glass text-sm" required>
+                        </div>
+                    </div>
+
+                    <div id="signup-error" class="error-msg"></div>
+
+                    <div class="pt-2">
+                        <button id="signup-submit" type="submit" class="w-full py-3.5 rounded-xl bg-gradient-brand text-white font-bold shadow-glow hover:shadow-glow-lg transition-all transform hover:-translate-y-0.5">
+                            Create Account
+                        </button>
+                    </div>
+                </form>
+                
+                <div class="mt-4">
+                    <div class="relative mb-4">
+                        <div class="absolute inset-0 flex items-center"><div class="w-full border-t border-gray-200 dark:border-white/10"></div></div>
+                        <div class="relative flex justify-center text-sm">
+                            <span class="px-2 bg-[#F0F4F8] dark:bg-[#0A0A0A] text-gray-500 rounded-full">Or</span>
+                        </div>
+                    </div>
+                    <button id="google-signup" type="button" class="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-gray-200 dark:border-white/10 hover:bg-white/5 transition-colors dark:text-white">
+                        <svg class="w-5 h-5" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+                        <span class="text-sm font-medium">Google</span>
+                    </button>
+                </div>
+
+                <div class="mt-6 text-center text-sm text-gray-500">
+                    Already a member? 
+                    <button onclick="toggleView('login')" class="text-brand-mid font-semibold hover:underline">Log in</button>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="text-center py-6 text-xs text-gray-400">
+        &copy; 2023 DisciplineX Inc.
+    </footer>
+
+    <script>
+        // 1. Icon Initialization
+        lucide.createIcons();
+
+        // 2. Theme Toggle Logic
+        const themeToggleBtn = document.getElementById('theme-toggle');
+        const html = document.documentElement;
+        
+        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            html.classList.add('dark');
+        } else {
+            html.classList.remove('dark');
+        }
+
+        themeToggleBtn.addEventListener('click', () => {
+            html.classList.toggle('dark');
+            localStorage.theme = html.classList.contains('dark') ? 'dark' : 'light';
+        });
+
+        // 3. View Switcher Logic (GLOBAL)
+        window.toggleView = function(viewName) {
+            const loginView = document.getElementById('login-view');
+            const signupView = document.getElementById('signup-view');
+            
+            // Clear errors on switch (form specific and global)
+            const errs = ['login-error', 'signup-error', 'auth-error'];
+            errs.forEach(id => {
+                const el = document.getElementById(id);
+                if(el) { el.textContent = ''; el.style.display = 'none'; }
+            });
+            
+            if (viewName === 'signup') {
+                loginView.style.opacity = '0';
+                setTimeout(() => {
+                    loginView.classList.remove('active');
+                    signupView.classList.add('active');
+                    setTimeout(() => { signupView.style.opacity = '1'; }, 50);
+                }, 300);
+            } else {
+                signupView.style.opacity = '0';
+                setTimeout(() => {
+                    signupView.classList.remove('active');
+                    loginView.classList.add('active');
+                    setTimeout(() => { loginView.style.opacity = '1'; }, 50);
+                }, 300);
+            }
+        }
+    </script>
+
+    <script type="module" src="firebase-init.js"></script>
+    <script type="module" src="auth-wiring.js"></script>
+
+</body>
+</html>

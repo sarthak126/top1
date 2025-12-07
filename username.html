@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Choose Username | DisciplineX</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Poppins', 'sans-serif'] },
+                    colors: {
+                        brand: { start: '#0EA5FF', mid: '#2B7BFF', end: '#3F6CFF' },
+                        glass: { light: 'rgba(255, 255, 255, 0.7)', dark: 'rgba(15, 23, 42, 0.6)' }
+                    },
+                    boxShadow: { 'glow': '0 0 20px rgba(14, 165, 255, 0.5)' }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        :root { --bg-body: #F0F4F8; --text-main: #1e293b; }
+        .dark { --bg-body: #050505; --text-main: #f8fafc; }
+        body { background-color: var(--bg-body); color: var(--text-main); transition: background-color 0.5s ease, color 0.5s ease; }
+        
+        .glass {
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.6);
+        }
+        .dark .glass { border: 1px solid rgba(255, 255, 255, 0.08); background: rgba(10, 10, 10, 0.6); }
+        .input-glass { background: rgba(255, 255, 255, 0.5); border: 1px solid rgba(203, 213, 225, 0.6); transition: all 0.3s ease; }
+        .dark .input-glass { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); color: white; }
+        .input-glass:focus { outline: none; border-color: #2B7BFF; box-shadow: 0 0 0 2px rgba(43, 123, 255, 0.2); }
+        .bg-gradient-brand { background: linear-gradient(135deg, #0EA5FF 0%, #2B7BFF 50%, #3F6CFF 100%); }
+        .error-msg { color: #ef4444; font-size: 0.8rem; margin-top: 0.5rem; display: none; }
+        .status-msg { font-size: 0.8rem; margin-top: 0.5rem; min-height: 1.25rem; transition: color 0.3s ease; }
+    </style>
+</head>
+<body class="antialiased min-h-screen relative overflow-hidden flex flex-col">
+
+    <div class="fixed inset-0 z-[-1] overflow-hidden pointer-events-none">
+        <div class="absolute top-[-10%] right-[-10%] w-[600px] h-[600px] bg-brand-start/20 rounded-full blur-[120px]"></div>
+        <div class="absolute bottom-[10%] left-[-5%] w-[500px] h-[500px] bg-brand-end/20 rounded-full blur-[100px]"></div>
+    </div>
+
+    <header class="absolute top-0 w-full z-50 p-6">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+            <a href="#" class="flex items-center gap-2 group">
+                <div class="w-8 h-8 rounded-lg bg-gradient-brand flex items-center justify-center text-white font-bold text-lg shadow-glow-sm">D</div>
+                <span class="font-bold text-xl tracking-tight dark:text-white text-slate-900">Discipline<span class="text-brand-mid">X</span></span>
+            </a>
+            <button id="theme-toggle" class="p-2 rounded-full hover:bg-black/5 dark:hover:bg-white/10 transition-colors">
+                <i data-lucide="sun" class="w-5 h-5 hidden dark:block text-yellow-400"></i>
+                <i data-lucide="moon" class="w-5 h-5 block dark:hidden text-slate-600"></i>
+            </button>
+        </div>
+    </header>
+
+    <main class="flex-grow flex items-center justify-center p-4 sm:p-6 pt-24">
+        
+        <div class="w-full max-w-md glass rounded-3xl shadow-2xl overflow-hidden relative p-8 md:p-10">
+            <div class="mb-6 text-center">
+                <h1 class="text-3xl font-bold dark:text-white text-slate-900 mb-2">Choose Your Username</h1>
+                <p class="text-sm dark:text-gray-400 text-gray-500">This name will be visible to others and on leaderboards.</p>
+            </div>
+
+            <div class="space-y-4">
+                <div class="space-y-1">
+                    <label class="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">Username</label>
+                    <div class="relative">
+                        <i data-lucide="at-sign" class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400"></i>
+                        <input id="username-input" type="text" placeholder="your_username" class="w-full pl-10 pr-10 py-3 rounded-xl input-glass text-sm" aria-describedby="username-status" autocomplete="off" autofocus>
+                        <div id="username-icon" class="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 flex items-center justify-center"></div>
+                    </div>
+                    <div id="username-status" class="status-msg text-gray-500 dark:text-gray-400"></div>
+                </div>
+
+                <div id="username-error" class="error-msg"></div>
+
+                <div class="pt-4">
+                    <button id="username-submit" class="w-full py-3.5 rounded-xl bg-gradient-brand text-white font-bold shadow-glow hover:shadow-glow-lg transition-all transform hover:-translate-y-0.5 opacity-50 cursor-not-allowed" disabled>
+                        Continue
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            if (window.lucide && typeof lucide.createIcons === 'function') lucide.createIcons();
+        });
+
+        // Theme Toggle Logic
+        const themeToggleBtn = document.getElementById('theme-toggle');
+        const html = document.documentElement;
+        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            html.classList.add('dark');
+        } else {
+            html.classList.remove('dark');
+        }
+        themeToggleBtn.addEventListener('click', () => {
+            html.classList.toggle('dark');
+            localStorage.theme = html.classList.contains('dark') ? 'dark' : 'light';
+        });
+    </script>
+
+    <script type="module" src="firebase-init.js"></script>
+    <script type="module" src="username-wiring.js"></script>
+
+</body>
+</html>
